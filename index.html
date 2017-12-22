@@ -15,31 +15,151 @@
         <div class="cover"></div>
         <div class="mainshow">
           <div class="songinfo clearfix">
-            <img src="http://p1.music.126.net/hH4UmteuzsqZHacrr3YS_g==/18358545649308968.jpg" alt="">
+            <img  alt="">
             <div class="songtitle">
               <h2>China-X</h2>
               <p>徐梦圆</p>
             </div>
             <div class="progressbar">
-              <span>0:00</span>
+              <span id = 'current'>0:00</span>
               <div class="bar-back"></div>
               <div class="bar-front"></div>
-              <span>0:00</span>
+              <span id = 'total'>0:00</span>
             </div>
           </div>
           
         </div>
         <div class="control">
-
+          <svg class="icon" aria-hidden="true" id = 'lastsong'>
+            <use xlink:href="#icon-shangyishou"></use>
+          </svg>
+          <svg class="icon" aria-hidden="true" id = 'play_stop'>
+            <use xlink:href="#icon-icon"></use>
+          </svg>
+          <svg class="icon" aria-hidden="true" id = 'nextsong'>
+            <use xlink:href="#icon-xiayishou"></use>
+          </svg>          
         </div>
     </div>
   </div>
 
   <audio id="music" src=""></audio>
+  <script src="/css/iconfont/iconfont.js"></script>
   <script>
-  var audioObject = document.querySelector('#music')
+  
+  var $ = function(e){
+    return document.querySelector(e);
+  }
+  var $$ = function(e){
+    return document.querySelectorAll(e);
+  }
+  var audioObject = $('#music');
+  var songPic = $('.songinfo img');
+  var title = $('.songtitle h2');
+  var author = $('.songtitle p');
+  var shadebg = $('.shade');
+  var coverbg = $('.cover');
+  var play_stop = $('#play_stop');
+  var play_stop_pic = $('#play_stop use');
+  var nextsong = $('#nextsong');
+  var lastsong = $('#lastsong');
+  var totaltime = $('#total');
+  var current = $('#current');
+  var barWidth = $('.progressbar .bar-front');
+  var frontbar = $('.bar-back');
+  
+ 
   getSongList(function(list){
-    audioObject.src = list[0].src;
+
+    var songindex = 0;
+    
+    loadsong(songindex);// 初始化
+
+    //播放 暂停
+    function play(){
+      audioObject.play();
+      audioObject.autoplay = true;
+      play_stop.innerHTML = '<use xlink:href="#icon-icon12"></use>';
+    }
+    function pause(){
+      audioObject.pause();
+      play_stop.innerHTML = '<use xlink:href="#icon-icon"></use>'
+    }
+    play_stop.onclick = function(){
+      if(audioObject.paused){
+        play();
+      }else{
+        pause();
+        clearTimeout(timer);
+      }
+    }
+
+    audioObject.ontimeupdate = function(){
+
+      barWidth.style.width = (audioObject.currentTime/audioObject.duration)*300 + 'px';
+
+
+      timer = setTimeout(function(){
+        var sec = Math.floor(audioObject.currentTime)%60 + '';
+        sec = sec.length==2? sec : '0'+sec;
+        current.innerText = Math.floor(audioObject.currentTime/60) + ':' + sec; 
+
+        var dursec = Math.floor(audioObject.duration)%60 + '';
+        dursec = dursec.length==2? dursec : '0'+ dursec;
+        totaltime.innerText = Math.floor(audioObject.duration/60) + ':' + dursec;
+
+      },1000)
+    }
+    function playnext(){
+      songindex = songindex >= list.length-1?  0 : ++songindex;
+      loadsong(songindex);
+    }
+    audioObject.onended =function(){
+      console.log('完了');
+      playnext();
+    }
+    lastsong.onclick  = function(){
+      songindex = songindex <= 0 ? list.length-1 : --songindex;
+      loadsong(songindex);
+      play_stop.innerHTML = '<use xlink:href="#icon-icon12"></use>';
+    }
+    nextsong.onclick = function(){
+      playnext();
+      play_stop.innerHTML = '<use xlink:href="#icon-icon12"></use>';
+    }
+
+
+    frontbar.onclick = function(e){
+      console.log(e);
+      var percent = e.offsetX/300;
+      console.log(percent);
+      console.log(audioObject.duration);
+      console.log(audioObject.currentTime)
+      // chrome存在不能设置currentTime的BUG,
+      audioObject.currentTime = audioObject.duration * percent;
+
+      console.log(audioObject.duration * percent);
+      barWidth.style.width = percent*300 + 'px';
+
+    }
+    barWidth.onclick = function(e){
+      var percent = e.offsetX/300;
+      audioObject.currentTime = audioObject.duration * percent;
+      barWidth.style.width = e.offsetX + 'px';
+    }
+
+
+    function loadsong(index){
+      songPic.src = list[index].pic;
+      shadebg.style.backgroundImage = "url("+ list[index].pic + ")";
+      coverbg.style.backgroundImage = "url("+ list[index].pic + ")";
+      title.innerText = list[index].title;
+      author.innerText = list[index].author;
+      audioObject.src = list[index].src; 
+      barWidth.style.width = 0;
+    }
+
+
   });
 
   function getSongList(callback){
@@ -55,7 +175,7 @@
     }
     xhr.send();
   };
-
+  
 
 
 

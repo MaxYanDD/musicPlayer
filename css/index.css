@@ -28,8 +28,8 @@
   height: 200px;
   width: 100%;
   border-radius: 10px 10px 0 0; 
-  background: url(http://p1.music.126.net/hH4UmteuzsqZHacrr3YS_g==/18358545649308968.jpg) no-repeat center center;
-  background-size: cover;
+  background-position: center center;
+  background-size: cover; 
 }
 .cover{
   position: absolute;
@@ -38,10 +38,12 @@
   height: 200px;
   width: 100%;
   border-radius: 10px 10px 0 0; 
-  background: url(http://p1.music.126.net/hH4UmteuzsqZHacrr3YS_g==/18358545649308968.jpg) no-repeat center center;
-  background-size: cover;
-  filter: blur(4px)
+  background-position: center center;
+  background-size: cover; 
+  filter: blur(4px);
+
 }
+
 .shade img{
   border-radius: 10px 10px 0 0; 
 }
@@ -84,6 +86,7 @@
   height: 4px;
   background: #444;
   cursor: pointer;
+  
 }
 .progressbar span {
   font-size: 12px;
@@ -93,7 +96,6 @@
   margin: 0 4px;
 }
 .progressbar .bar-front{
-  width: 100px;
   position: absolute;
   top: 50%;
   left: 50px;
@@ -102,5 +104,16 @@
   z-index:100;
 }
 .control {
-  
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:rgba(255, 255, 255, 0.4);
+  border-radius: 0 0 10px 10px;
+}
+.control svg{
+  height: 50px;
+  width: 50px;
+  margin: 0 20px;
+  cursor: pointer;
 }
