@@ -2,7 +2,7 @@ var http = require('http')
 var url = require('url')
 var path = require('path')
 var fs = require('fs')
-var mime = require('./mime').types;
+// var mime = require('./mime').types;
 
 var server = http.createServer(function(req, res){
   var urlObj = url.parse(req.url,true)
